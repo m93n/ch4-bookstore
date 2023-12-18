@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    # command: python /code/manage.py runserver 0.0.0.0:8000
+    command: gunicorn django_project.wsgi -b 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - "DJANGO_SECRET_KEY=django-insecure-ow=n#e2%(0t3cmdcm%e_sp_oi(0=_lcael)rspe=_7=!7+922g"
+      - "DJANGO_DEBUG=True"
+      - "DJANGO_SECURE_SSL_REDIRECT=False"
+      - "DJANGO_SECURE_HSTS_SECONDS=0"
+      - "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=False"
+      - "DJANGO_SECURE_HSTS_PRELOAD=False"
+      - "DJANGO_SESSION_COOKIE_SECURE=False"
+      - "DJANGO_CSRF_COOKIE_SECURE=False"
+      - "EMAIL_HOST=smtp.mailgun.org"
+      - "EMAIL_HOST_USER=brad@sandbox02827283525e4a4d92a81c4af27ab9d6.mailgun.org"
+      - "EMAIL_HOST_PASSWORD=40073797051027f4278c39f2463b74bf-451410ff-7e9e575b"
+      - "EMAIL_PORT=25" # or 465, 587
+      - "EMAIL_USE_TLS=True"
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+volumes:
+  postgres_data:
